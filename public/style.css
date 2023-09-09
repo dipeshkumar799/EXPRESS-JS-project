@@ -1,0 +1,20 @@
+*{
+  font-family: Arial, Helvetica, sans-serif;
+      margin: 0px;
+      padding: 0px;
+  }
+  .form{
+      text-align: center;
+      border: 2px solid red;
+      width: 400px;
+  background-color: aqua;
+  margin: 400px;
+  padding: 55px;
+  margin-bottom: 400px;
+  
+  }
+  button{
+      height: 20px;
+      color: dark black;
+      background-color: azure;
+  }
