@@ -7,6 +7,7 @@ import cookieParser from "cookie-parser";
 import forexData from "./forex/forex.js";
 import ForexRate from "./model/forexType.js";
 import Note from "./model/note.js";
+import Blogpost from "./model/blogpost.js";
 const app = express();
 app.use(express.json());
 const port = 3000;
@@ -239,6 +240,60 @@ app.get("/getnote/:id", async (req, res) => {
       return res.send("note not found");
     }
     res.send(getNote);
+  } catch (error) {
+    return res.send(error);
+  }
+});
+app.post("/blog-post", async (req, res) => {
+  try {
+    const { title, content, auther } = req.body;
+    const blogInstance = await Blogpost.create({
+      title,
+      content,
+      auther,
+    });
+    await blogInstance.save();
+    res.send(blogInstance);
+  } catch (error) {
+    return res.send(error);
+  }
+});
+app.get("/blog-post", async (req, res) => {
+  try {
+    const blogpostInstance = await Blogpost.find();
+    console.log(blogpostInstance);
+    res.send(blogpostInstance);
+  } catch (error) {
+    res.send(error);
+  }
+});
+app.put("/update-blog/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { title, content } = req.body;
+    const updatedblog = await Blogpost.findByIdAndUpdate(
+      id,
+      { title, content },
+      { new: true }
+    );
+    if (!updatedblog) {
+      return res.send("no blog found");
+    }
+    console.log(updatedblog);
+    res.send(updatedblog);
+  } catch (error) {
+    res.send(error);
+  }
+});
+app.delete("/delete-blog/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deleteblog = await Blogpost.findByIdAndDelete(id);
+    console.log(deleteblog);
+    if (!deleteblog) {
+      return res.send("Blog post not found");
+    }
+    res.send("deleted successfully");
   } catch (error) {
     return res.send(error);
   }
