@@ -8,6 +8,7 @@ import forexData from "./forex/forex.js";
 import ForexRate from "./model/forexType.js";
 import Note from "./model/note.js";
 import Blogpost from "./model/blogpost.js";
+import Product from "./model/product.js";
 const app = express();
 app.use(express.json());
 const port = 3000;
@@ -298,7 +299,63 @@ app.delete("/delete-blog/:id", async (req, res) => {
     return res.send(error);
   }
 });
-
+app.post("/product", async (req, res) => {
+  try {
+    const { name, price, description } = req.body;
+    const product = await Product.create({
+      name,
+      price,
+      description,
+    });
+    await product.save();
+    res.send(product);
+  } catch (error) {
+    res.send(error);
+  }
+});
+app.get("/getallproduct", async (req, res) => {
+  try {
+    const product = await Product.find();
+    console.log(product);
+    if (!product) {
+      return res.send("product is not found");
+    }
+    res.send(product);
+  } catch (errors) {
+    res.send(errors);
+  }
+});
+app.put("/updateproduct/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, description, price } = req.body;
+    const updateproduct = await Product.findByIdAndUpdate(
+      id,
+      { price, name, description },
+      { new: true }
+    );
+    console.log(updateproduct);
+    if (!updateproduct) {
+      res.send("no product found");
+    }
+    res.send("updated successfully");
+  } catch (error) {
+    res.send(error);
+  }
+});
+app.delete("/deleteproduct/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deleteproduct = await Product.findByIdAndDelete(id);
+    console.log(deleteproduct);
+    if (!deleteproduct) {
+      res.send("product not found");
+    }
+    res.send("product deleted successfully");
+  } catch (error) {
+    res.send(error);
+  }
+});
 app.listen(port, () => {
   console.log(`server is running on port at:http://localhost:${port}`);
 });
