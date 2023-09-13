@@ -9,6 +9,8 @@ import ForexRate from "./model/forexType.js";
 import Note from "./model/note.js";
 import Blogpost from "./model/blogpost.js";
 import Product from "./model/product.js";
+import Order from "./model/order.js";
+import Orders from "./model/order.js";
 const app = express();
 app.use(express.json());
 const port = 3000;
@@ -356,6 +358,43 @@ app.delete("/deleteproduct/:id", async (req, res) => {
     res.send(error);
   }
 });
+app.post("/orders", async (req, res) => {
+  try {
+    const { products, userId } = req.body;
+
+    // Calculate the total price of the order
+    const totalPrice = calculateTotalPrice(products);
+    const order = new Orders({
+      products,
+      user: userId,
+      totalPrice,
+    });
+    console.log(order);
+    await order.save();
+    res.send(order);
+    res.send(totalPrice);
+  } catch (Error) {
+    res.send(Error);
+  }
+});
+app.get("/oderes", async (req, res) => {
+  try {
+    const getProduct = await Orders.find()
+      .populate("products.productId")
+      .populate("user");
+    res.send(getProduct);
+  } catch (error) {
+    res.send(error);
+  }
+});
+// Helper function to calculate total price
+function calculateTotalPrice(products) {
+  let totalPrice = 0;
+  for (const product of products) {
+    totalPrice += product.quantity * product.productId.price;
+  }
+  return totalPrice;
+}
 app.listen(port, () => {
   console.log(`server is running on port at:http://localhost:${port}`);
 });
