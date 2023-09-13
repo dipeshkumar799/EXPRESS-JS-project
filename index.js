@@ -364,6 +364,7 @@ app.post("/orders", async (req, res) => {
 
     // Calculate the total price of the order
     const totalPrice = calculateTotalPrice(products);
+    console.log(totalPrice);
     const order = new Orders({
       products,
       user: userId,
@@ -377,11 +378,9 @@ app.post("/orders", async (req, res) => {
     res.send(Error);
   }
 });
-app.get("/oderes", async (req, res) => {
+app.get("/orders", async (req, res) => {
   try {
-    const getProduct = await Orders.find()
-      .populate("products.productId")
-      .populate("user");
+    const getProduct = await Orders.find();
     res.send(getProduct);
   } catch (error) {
     res.send(error);
@@ -391,7 +390,7 @@ app.get("/oderes", async (req, res) => {
 function calculateTotalPrice(products) {
   let totalPrice = 0;
   for (const product of products) {
-    totalPrice += product.quantity * product.productId.price;
+    totalPrice == product.quantity * product.productId.price;
   }
   return totalPrice;
 }
