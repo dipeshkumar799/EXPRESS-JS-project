@@ -8,8 +8,8 @@ import forexData from "./forex/forex.js";
 import ForexRate from "./model/forexType.js";
 import Note from "./model/note.js";
 import Blogpost from "./model/blogpost.js";
-import Product from "./model/product.js";
-import Order from "./model/order.js";
+import Profile from "./model/profile.js";
+import upload from "./multer/configmulter.js";
 import Orders from "./model/order.js";
 const app = express();
 app.use(express.json());
@@ -394,6 +394,22 @@ function calculateTotalPrice(products) {
   }
   return totalPrice;
 }
+app.post("/profile", upload.single("profileImage"), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.send("File not found.");
+    }
+    const profile = new Profile({
+      profileImage: req.file.buffer,
+    });
+    console.log(Profile);
+    await profile.save();
+    return res.send("File uploaded successfully.");
+  } catch (error) {
+    return res.send(error.message);
+  }
+});
+
 app.listen(port, () => {
   console.log(`server is running on port at:http://localhost:${port}`);
 });
